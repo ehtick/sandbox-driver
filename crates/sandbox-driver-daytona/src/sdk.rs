@@ -242,7 +242,8 @@ pub(crate) fn auto_delete_minutes(duration: Duration) -> i32 {
 }
 
 pub(crate) fn gigabytes(mb: u64) -> i32 {
-    i32::try_from(mb.div_ceil(1024)).unwrap_or(i32::MAX).max(1)
+    i32::try_from(sandbox_driver_daytona_config::allocation_mib(mb) / 1024)
+        .expect("normalized Daytona allocations fit the API's signed GiB field")
 }
 
 #[cfg(test)]
