@@ -515,6 +515,20 @@ mod tests {
     use super::*;
 
     #[test]
+    fn snapshot_requests_use_effective_sizes_and_preserve_omitted_resources() {
+        assert!(sdk_resources(&Resources::default()).is_none());
+        let mut resources = Resources::default();
+        resources.cpu_cores = Some(2);
+        resources.memory_mb = Some(3815);
+        let request = sdk_resources(&resources).unwrap();
+        assert_eq!(request.cpu, Some(2));
+        assert_eq!(request.memory, Some(4));
+        assert_eq!(request.disk, None);
+        resources.disk_mb = Some(2862);
+        assert_eq!(sdk_resources(&resources).unwrap().disk, Some(3));
+    }
+
+    #[test]
     fn snapshot_status_reports_kind_regions_and_resources() {
         let mut dto = SnapshotDto::new(
             "snap-1".to_owned(),
